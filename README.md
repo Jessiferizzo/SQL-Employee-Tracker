@@ -26,7 +26,7 @@
 
   📷 ![Main Menu screenshot](/assets/images/Screen%20Shot%202022-06-03%20at%205.15.21%20PM.png)
   
-  🎥 Here is a link to a video walk-through demonstration of the app: [Demo Video](https://drive.google.com/file/d/1Vjt4m2cXWRDqVYNe3Kgsx491PLZ1rDvJ/view)
+  🎥 Here is a link to a video walk-through demonstration of the app: [Demo Video](https://www.youtube.com/watch?v=qxYNol2wkPM)
 
   ## Questions
   Please contact me using the following links:
