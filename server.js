@@ -1,20 +1,12 @@
 // List the dependencies here.
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
 const util = require('util');
 
-/*Create the connection to MySQL WorkBench
-let connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: '',
-    database: 'employee_DB'
-})*/
 
 //Connect to mysql database
-const db = mysql.createConnection(
+const connection = mysql.createConnection(
     {
       host: '127.0.0.1',
       // Your MySQL username,
@@ -26,7 +18,8 @@ const db = mysql.createConnection(
     console.log('Connected to Employee Database.')
   );
 
-connection.query = util.promisify(connection.query);
+connection.query = util.promisify(connection.query)
+
 
 // Begin the application after establishing the connection.
 connection.connect(function (err) {
@@ -100,7 +93,7 @@ const initialPrompt = async () => {
 const employeeView = async () => {
     console.log('Employee View');
     try {
-        let query = 'SELECT * FROM employee';
+        let query = 'SELECT e.id AS ID, e.first_name AS FIRST, e.last_name AS LAST, role.title as TITLE, department.department_name AS Department, role.salary as Salary, m. first_name AS Manager FROM employee e JOIN role ON e.role_id=role.id JOIN department on role.department_id=department.id INNER JOIN employee m ON m.id=e.manager_id ORDER BY e.id';
         connection.query(query, function (err, res) {
             if (err) throw err;
             let employeeArray = [];
@@ -118,7 +111,7 @@ const employeeView = async () => {
 const departmentView = async () => {
     console.log('Department View');
     try {
-        let query = 'SELECT * FROM department';
+        let query = 'SELECT department.id AS ID, department_name AS NAME FROM department';
         connection.query(query, function (err, res) {
             if (err) throw err;
             let departmentArray = [];
@@ -132,11 +125,11 @@ const departmentView = async () => {
     };
 }
 
-// view all employees function
+// view all roles function
 const roleView = async () => {
     console.log('Role View');
     try {
-        let query = 'SELECT * FROM role';
+        let query = 'SELECT role.id AS ID, role.title AS Title, role.salary AS Salary, department.department_name AS Department FROM role INNER JOIN department ON role.department_id=department.id';
         connection.query(query, function (err, res) {
             if (err) throw err;
             let roleArray = [];
@@ -190,7 +183,7 @@ const employeeAdd = async () => {
                         value: manager.id
                     }
                 }),
-                message: "What is this employee's mananger Id?"
+                message: "Who is this employee's manager?"
             }
         ])
 
@@ -227,7 +220,7 @@ const departmentAdd = async () => {
             department_name: answer.deptName
         });
 
-        console.log(`${answer.deptName} added department to database.\n`)
+        console.log(`${answer.deptName} added to departments.\n`)
         initialPrompt();
 
     } catch (err) {
@@ -288,7 +281,7 @@ const roleAdd = async () => {
     };
 }
 
-// update a role for a specific employee function
+// update a role for a specific employee
 const employeeUpdate = async () => {
     try {
         console.log('Employee Update');
@@ -305,7 +298,7 @@ const employeeUpdate = async () => {
                         value: employeeName.id
                     }
                 }),
-                message: "Which employee's role do you want to update?"
+                message: 'Which employee do you want to update?'
             }
         ]);
 
@@ -327,7 +320,7 @@ const employeeUpdate = async () => {
 
         let result = await connection.query("UPDATE employee SET ? WHERE ?", [{ role_id: roleSelection.role }, { id: employeeSelection.employee }]);
 
-        console.log(`The role was added to database.\n`);
+        console.log(`The role was successfully updated.\n`);
         initialPrompt();
 
     } catch (err) {
